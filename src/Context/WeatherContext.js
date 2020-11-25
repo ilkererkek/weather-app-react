@@ -5,12 +5,21 @@ export const WeatherContext = createContext();
 const WeatherContextProvider = (props) => {
     const [cityIds, setCityIds] = useState([5128581,2643743,745044,1261481,1850147]);
     const [forecasts,setForecasts] = useState([]);
-    const [loading,setLoading] = useState(false)
+    const [loading,setLoading] = useState(true)
     const fetchCityData = async (id) => {
         
         const res = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?id=${id}&appid=bae8b743a044835a3647e4e03e901110&units=metric`);
         const {city,list} = await res.data;
         return res.data;
+    }
+
+    const getCityData=async (id)=> {
+        
+        const res = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?id=${id}&appid=bae8b743a044835a3647e4e03e901110&units=metric`);
+        const {city,list} = await res.data;
+        if(res.data){
+            setForecasts(oldfor =>[...oldfor, res.data]);
+        }
     }
     useEffect( () => {
         setLoading(true)
@@ -24,7 +33,7 @@ const WeatherContextProvider = (props) => {
     } ,[])
 
     return(
-        <WeatherContext.Provider value={{loading,forecasts}} >
+        <WeatherContext.Provider value={{loading,forecasts,getCityData}} >
             {props.children}
         </WeatherContext.Provider>
     )
