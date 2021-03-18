@@ -1,50 +1,50 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Redirect } from 'react-router-dom';
-import { WeatherContext } from '../Context/WeatherContext'
-import Loading from './Loading';
+import { WeatherContext } from '../Context/WeatherContext';
 
 const Details = ({id}) => {
-    console.log(id)
-    const {forecasts,getCityData} = useContext(WeatherContext);
-    const forecast = forecasts.find(forecast => forecast.city.id===parseInt(id));
-    const [flag,setFlag] = useState(false)
-    useEffect(async ()=>{
-    if(forecasts.length>1&& !forecast){
-        setFlag(true);  
-    }
-    },[forecasts])
-
     
-
-   if(flag){
-       
+    console.log(id)
+    const {forecasts} = useContext(WeatherContext);
+    const [forecast,setForecast] = useState(null);
+    const [date,setDate] = useState(new Date(Date.now()))
+    const [sunTime,setSunTime] = useState({})
+    useEffect(()=>{
+        const data = forecasts.find(forecast=> forecast.city.id===parseInt(id));
+        setForecast(data)
+        if(forecast){
+            const  UTCms = (date.getTime() + date.getTimezoneOffset()*60*1000);
+            console.log('dsadsa')
+            setDate(new Date(UTCms+forecast.city.timezone*1000));   
+            setSunTime({sunset:new Date(UTCms+forecast.city.sunset*1000), sunrise:new Date(UTCms+forecast.city.sunrise*1000)})
+            
         
-        return(
-           <Redirect to='/404'/>
-       )
-   }
-   else{
-      return(
+        }
+    },[forecast])
+  
+    return (
         <div>
-            {forecast?
-                <div className="city-container container">
-                    <div className="city-detail">
-                        <div className="city-header">
-                            <img className='main-icon' src={`http://openweathermap.org/img/wn/${forecast.list[0].weather[0].icon}@2x.png`} />
-                            <div>
+            {forecast ? 
+            <div className="container city-container">
+                <div className="city-detail">
+                    <div className="city-header">
+                        <img className='detail-icon' src={`http://openweathermap.org/img/wn/${forecast.list[0].weather[0].icon}@2x.png`} />
+                        <div>
                             <h1>{forecast.city.name}</h1>
                             <h3>{parseInt(forecast.list[0].main.temp)} °C</h3>
-                            </div>
-                            
                         </div>
-                        
                     </div>
-                </div>:
-                <Loading/>
-            }
+                    <div className="city-sub-detail">
+                        <h2>{(date.getHours()<10?'0':'') + date.getHours() }:{(date.getMinutes()<10?'0':'') + date.getMinutes() }</h2>
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            :null}
         </div>
-      )
-   }
+    )
 }
 
 export default Details
+

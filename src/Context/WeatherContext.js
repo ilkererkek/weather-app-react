@@ -15,11 +15,20 @@ const WeatherContextProvider = (props) => {
 
     const getCityData=async (id)=> {
         
-        const res = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?id=${id}&appid=bae8b743a044835a3647e4e03e901110&units=metric`);
-        const {city,list} = await res.data;
-        if(res.data){
-            setForecasts(oldfor =>[...oldfor, res.data]);
-        }
+        const find = forecasts.find(forecast => forecast.city.id===parseInt(id))
+        console.log('getdata'+find);
+       try {
+            if(find === undefined)
+            {   
+                console.log('not found');
+                const data = await fetchCityData(id);
+                console.log(data)
+                setForecasts(forecasts =>[...forecasts,data])
+            }
+            return(true)
+       } catch (error) {
+           return(false)
+       }
     }
     useEffect( () => {
         setLoading(true)

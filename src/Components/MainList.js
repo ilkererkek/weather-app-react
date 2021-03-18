@@ -8,7 +8,7 @@ const MainList = () => {
         <div className="main-list ">
            <h2>Some forecast data for you,<span className="dark"> all around the globe.</span></h2>
            <ul>
-               {forecasts.map(forecast => <li key={forecast.city.id}><CityCard forecast={forecast}/></li>)}
+               {forecasts.slice(0,5).map(forecast => <li key={forecast.city.id}><CityCard forecast={forecast}/></li>)}
            </ul>
         </div>
     )
